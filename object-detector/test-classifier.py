@@ -65,7 +65,7 @@ if __name__ == "__main__":
             if im_window.shape[0] != min_wdw_sz[1] or im_window.shape[1] != min_wdw_sz[0]:
                 continue
             # Calculate the HOG features
-            fd = hog(im_window, orientations, pixels_per_cell, cells_per_block, visualize, normalize)
+            fd = hog(im_window, orientations=orientations, pixels_per_cell=pixels_per_cell, cells_per_block=cells_per_block, visualise=visualize, transform_sqrt=normalize)
             pred = clf.predict(fd)
             if pred == 1:
                 print  "Detection:: Location -> ({}, {})".format(x, y)
@@ -89,13 +89,15 @@ if __name__ == "__main__":
         # Move the the next scale
         scale+=1
 
+    out_img = '/datasets/'
     # Display the results before performing NMS
     clone = im.copy()
     for (x_tl, y_tl, _, w, h) in detections:
         # Draw the detections
         cv2.rectangle(im, (x_tl, y_tl), (x_tl+w, y_tl+h), (0, 0, 0), thickness=2)
-    cv2.imshow("Raw Detections before NMS", im)
-    cv2.waitKey()
+    cv2.imwrite(out_img+'out.png' , im)
+    # cv2.imshow("Raw Detections before NMS", im)
+    # cv2.waitKey()
 
     # Perform Non Maxima Suppression
     detections = nms(detections, threshold)
@@ -104,5 +106,6 @@ if __name__ == "__main__":
     for (x_tl, y_tl, _, w, h) in detections:
         # Draw the detections
         cv2.rectangle(clone, (x_tl, y_tl), (x_tl+w,y_tl+h), (0, 0, 0), thickness=2)
-    cv2.imshow("Final Detections after applying NMS", clone)
-    cv2.waitKey()
+    cv2.imwrite(out_img+'out.nms.png' , clone)
+    # cv2.imshow("Final Detections after applying NMS", clone)
+    # cv2.waitKey()
